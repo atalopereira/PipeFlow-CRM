@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+build
+next-env.d.ts
+package-lock.json
+
+# Tooling/config directories not part of app source
+.claude
+.vscode
+.mcp.json
+.mcp.json.backup-*
+CLAUDE.md.backup-*
+docs
