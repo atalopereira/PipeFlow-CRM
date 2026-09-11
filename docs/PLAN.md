@@ -10,12 +10,12 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 **Branch:** `setup/project-init`
 **Objetivo:** Scaffold do projeto rodando localmente e publicável, sem funcionalidades ainda.
 
-- [ ] Inicializar Next.js 14 (App Router) + TypeScript + Tailwind CSS
-- [ ] Instalar e configurar shadcn/ui (estilo "new-york")
-- [ ] Configurar ESLint + Prettier
-- [ ] Criar estrutura de pastas conforme CLAUDE.md (`app/`, `components/`, `lib/`, `hooks/`, `types/`, `supabase/`)
-- [ ] `git init` + primeiro commit + repositório remoto (GitHub)
-- [ ] Deploy inicial vazio na Vercel (validar pipeline de deploy)
+- [x] Inicializar Next.js 14 (App Router) + TypeScript + Tailwind CSS
+- [x] Instalar e configurar shadcn/ui (estilo "new-york")
+- [x] Configurar ESLint + Prettier
+- [x] Criar estrutura de pastas conforme CLAUDE.md (`app/`, `components/`, `lib/`, `hooks/`, `types/`, `supabase/`)
+- [x] `git init` + primeiro commit + repositório remoto (GitHub)
+- [x] Deploy inicial vazio na Vercel (validar pipeline de deploy)
 
 **Commit final:** `chore: scaffold Next.js project with Tailwind, shadcn/ui and base structure`
 
