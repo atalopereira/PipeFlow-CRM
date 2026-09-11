@@ -36,14 +36,16 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 
 ## M2 — UI: Autenticação
 **Branch:** `feature/auth-ui`
-**Objetivo:** Telas de login e cadastro, sem integração real ainda (mock/local state).
+**Objetivo:** Telas de login, cadastro e onboarding inicial, sem integração real ainda (mock/local state).
 
 - [ ] Tela de Login
 - [ ] Tela de Signup
+- [ ] Onboarding pós-signup: criação do workspace inicial (mock, mesmo shape que M7 vai persistir)
 - [ ] Validação de formulário no client
 - [ ] Estados de erro/loading (visuais)
+- [ ] Componentes reutilizáveis extraídos onde há duplicação real entre as 3 telas (shell de auth, input de senha, botão de submit com loading)
 
-**Commit final:** `feat: add login and signup screens (UI only)`
+**Commit final:** `feat: add login, signup and onboarding screens (UI only)`
 
 ---
 
