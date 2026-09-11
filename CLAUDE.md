@@ -76,3 +76,5 @@ Starting point, inspired by the PRD's references — Pipedrive's clean, pipeline
 No `package.json` exists yet (M1 sets this up). Once scaffolded, standard commands apply: `npm run dev`, `npm run build`, `npm run lint`, `npm run typecheck`, plus `supabase db push` for migrations and `stripe listen --forward-to localhost:3000/api/webhooks/stripe` for local webhook testing. Update this section once scaffolding lands with the actual scripts in `package.json`.
 
 Before committing: typecheck, lint, and confirm any new/changed table has a matching RLS policy under `supabase/policies/`.
+
+**Always ask before committing.** Never run `git commit` (or `git push`) on your own initiative — prepare the change, show the user what would be committed (e.g. `git status` / `git diff`), and wait for an explicit go-ahead first, even if the task otherwise seems complete.
