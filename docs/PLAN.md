@@ -38,12 +38,12 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 **Branch:** `feature/auth-ui`
 **Objetivo:** Telas de login, cadastro e onboarding inicial, sem integração real ainda (mock/local state).
 
-- [ ] Tela de Login
-- [ ] Tela de Signup
-- [ ] Onboarding pós-signup: criação do workspace inicial (mock, mesmo shape que M7 vai persistir)
-- [ ] Validação de formulário no client
-- [ ] Estados de erro/loading (visuais)
-- [ ] Componentes reutilizáveis extraídos onde há duplicação real entre as 3 telas (shell de auth, input de senha, botão de submit com loading)
+- [x] Tela de Login
+- [x] Tela de Signup
+- [x] Onboarding pós-signup: criação do workspace inicial (mock, mesmo shape que M7 vai persistir)
+- [x] Validação de formulário no client
+- [x] Estados de erro/loading (visuais)
+- [x] Componentes reutilizáveis extraídos onde há duplicação real entre as 3 telas (shell de auth, input de senha, botão de submit com loading)
 
 **Commit final:** `feat: add login, signup and onboarding screens (UI only)`
 
@@ -53,10 +53,10 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 **Branch:** `feature/dashboard-shell-ui`
 **Objetivo:** Casca da aplicação autenticada — navegação e troca de workspace (mock).
 
-- [ ] Layout autenticado (sidebar + área de conteúdo)
-- [ ] Sidebar com navegação (Leads, Pipeline, Dashboard, Configurações)
-- [ ] Dropdown de troca de workspace (dados mock)
-- [ ] Estado vazio/skeleton padrão para as páginas internas
+- [x] Layout autenticado (sidebar + área de conteúdo)
+- [x] Sidebar com navegação (Leads, Pipeline, Dashboard, Configurações)
+- [x] Dropdown de troca de workspace (dados mock)
+- [x] Estado vazio/skeleton padrão para as páginas internas
 
 **Commit final:** `feat: add authenticated dashboard shell with sidebar and workspace switcher`
 
