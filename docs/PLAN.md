@@ -66,10 +66,10 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 **Branch:** `feature/leads-ui`
 **Objetivo:** Gestão de leads na interface, com dados mock.
 
-- [ ] Listagem de leads (tabela/cards) com dados mock
-- [ ] Busca e filtros (status, responsável, data) — client-side sobre mock
-- [ ] Formulário de cadastro/edição de lead
-- [ ] Página de detalhe do lead (perfil + timeline de atividades mock)
+- [x] Listagem de leads (tabela) com dados mock
+- [x] Busca (nome/empresa) e filtro por status — client-side sobre mock
+- [x] Formulário de cadastro/edição/exclusão de lead
+- [x] Página de detalhe do lead (perfil + timeline de atividades mock)
 
 **Commit final:** `feat: add leads listing, detail page and mock data`
 

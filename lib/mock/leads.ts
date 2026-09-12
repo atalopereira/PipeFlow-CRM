@@ -1,0 +1,158 @@
+import type { Lead } from "@/types/lead";
+
+// Fixed reference instant so server-render and client-hydration always
+// compute the same ISO strings — using `new Date()` here would make the
+// two diverge by however long compilation/rendering takes, breaking hydration.
+const NOW = new Date("2026-09-12T12:00:00.000Z");
+
+function daysAgo(days: number): string {
+  const date = new Date(NOW);
+  date.setDate(date.getDate() - days);
+  return date.toISOString();
+}
+
+const OWNERS = {
+  atalo: { name: "Atalo Araujo", initials: "AA" },
+  camila: { name: "Camila Souza", initials: "CS" },
+  rafael: { name: "Rafael Lima", initials: "RL" },
+};
+
+export const MOCK_LEADS: Lead[] = [
+  {
+    id: "lead_001",
+    name: "João Pedro Almeida",
+    email: "joao.almeida@construtoraalfa.com.br",
+    phone: "(11) 98765-4321",
+    company: "Construtora Alfa",
+    role: "Diretor de Compras",
+    statusId: "qualificado",
+    owner: OWNERS.atalo,
+    createdAt: daysAgo(2),
+    estimatedValue: 85000,
+    notes: "Interessada no pacote enterprise. Reunião marcada para próxima semana.",
+  },
+  {
+    id: "lead_002",
+    name: "Mariana Costa",
+    email: "mariana.costa@nuvemtech.com.br",
+    phone: "(21) 99876-5432",
+    company: "NuvemTech Soluções",
+    role: "CTO",
+    statusId: "em_contato",
+    owner: OWNERS.camila,
+    createdAt: daysAgo(5),
+    estimatedValue: 42000,
+    notes: "Já usa um concorrente, mas está insatisfeita com o suporte.",
+  },
+  {
+    id: "lead_003",
+    name: "Carlos Eduardo Santos",
+    email: "carlos.santos@gruporeal.com.br",
+    phone: "(31) 98123-4567",
+    company: "Grupo Real Distribuidora",
+    role: "Gerente Comercial",
+    statusId: "novo",
+    owner: OWNERS.rafael,
+    createdAt: daysAgo(0),
+  },
+  {
+    id: "lead_004",
+    name: "Fernanda Oliveira",
+    email: "fernanda.oliveira@bellamoda.com.br",
+    phone: "(41) 99654-3210",
+    company: "Bella Moda Confecções",
+    role: "Sócia-Proprietária",
+    statusId: "qualificado",
+    owner: OWNERS.atalo,
+    createdAt: daysAgo(20),
+    estimatedValue: 28000,
+  },
+  {
+    id: "lead_005",
+    name: "Ricardo Nunes",
+    email: "ricardo.nunes@agrovaletec.com.br",
+    phone: "(62) 98456-7890",
+    company: "AgroVale Tecnologia",
+    role: "Coordenador de TI",
+    statusId: "descartado",
+    owner: OWNERS.camila,
+    createdAt: daysAgo(45),
+  },
+  {
+    id: "lead_006",
+    name: "Juliana Ferreira",
+    email: "juliana.ferreira@saudeplenavida.com.br",
+    phone: "(51) 99234-5678",
+    company: "Saúde Plena Vida",
+    role: "Gerente de Marketing",
+    statusId: "em_contato",
+    owner: OWNERS.rafael,
+    createdAt: daysAgo(8),
+  },
+  {
+    id: "lead_007",
+    name: "Bruno Henrique Martins",
+    email: "bruno.martins@logfretemais.com.br",
+    phone: "(85) 98765-1234",
+    company: "LogFrete Mais",
+    role: "Diretor de Operações",
+    statusId: "novo",
+    owner: OWNERS.atalo,
+    createdAt: daysAgo(1),
+  },
+  {
+    id: "lead_008",
+    name: "Patrícia Ramos",
+    email: "patricia.ramos@editoraluminar.com.br",
+    phone: "(19) 99321-6547",
+    company: "Editora Luminar",
+    role: "Editora-Chefe",
+    statusId: "qualificado",
+    owner: OWNERS.camila,
+    createdAt: daysAgo(90),
+  },
+  {
+    id: "lead_009",
+    name: "Diego Rodrigues",
+    email: "diego.rodrigues@fintechavanca.com.br",
+    phone: "(11) 98111-2233",
+    company: "FinTech Avança",
+    role: "Head de Produto",
+    statusId: "em_contato",
+    owner: OWNERS.rafael,
+    createdAt: daysAgo(12),
+  },
+  {
+    id: "lead_010",
+    name: "Larissa Cardoso",
+    email: "larissa.cardoso@ecoverdealimentos.com.br",
+    phone: "(47) 99887-6655",
+    company: "Ecoverde Alimentos",
+    role: "Gerente de Suprimentos",
+    statusId: "descartado",
+    owner: OWNERS.atalo,
+    createdAt: daysAgo(60),
+  },
+  {
+    id: "lead_011",
+    name: "Thiago Barbosa",
+    email: "thiago.barbosa@construtechbrasil.com.br",
+    phone: "(81) 98234-7654",
+    company: "Construtech Brasil",
+    role: "Engenheiro-Chefe",
+    statusId: "novo",
+    owner: OWNERS.camila,
+    createdAt: daysAgo(3),
+  },
+  {
+    id: "lead_012",
+    name: "Vanessa Lima Pereira",
+    email: "vanessa.pereira@grupobrilhante.com.br",
+    phone: "(27) 99456-1230",
+    company: "Grupo Brilhante Cosméticos",
+    role: "Diretora Comercial",
+    statusId: "qualificado",
+    owner: OWNERS.rafael,
+    createdAt: daysAgo(30),
+  },
+];

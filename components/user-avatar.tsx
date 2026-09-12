@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 
 interface UserAvatarProps {
   name: string;
@@ -8,14 +8,7 @@ interface UserAvatarProps {
 }
 
 export function UserAvatar({ name, initials, className }: UserAvatarProps) {
-  const fallback =
-    initials ??
-    name
-      .split(" ")
-      .map((part) => part[0])
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
+  const fallback = initials ?? getInitials(name);
 
   return (
     <Avatar className={cn("h-8 w-8", className)}>
