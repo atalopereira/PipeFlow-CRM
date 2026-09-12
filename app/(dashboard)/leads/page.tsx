@@ -1,27 +1,34 @@
-import { Plus, Users } from "lucide-react";
+"use client";
 
-import { EmptyState } from "@/components/empty-state";
+import { Plus } from "lucide-react";
+
+import { LeadFormDialog } from "@/components/lead-form-dialog";
+import { LeadsTable } from "@/components/leads-table";
+import { useLeads } from "@/components/leads-provider";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 
 export default function LeadsPage() {
+  const { leads } = useLeads();
+
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
         title="Leads"
         description="Gerencie seus leads e contatos."
         actions={
-          <Button disabled>
-            <Plus className="h-4 w-4" />
-            Novo lead
-          </Button>
+          <LeadFormDialog
+            mode="create"
+            trigger={
+              <Button>
+                <Plus className="h-4 w-4" />
+                Novo lead
+              </Button>
+            }
+          />
         }
       />
-      <EmptyState
-        icon={Users}
-        title="Nenhum lead ainda"
-        description="A listagem de leads chega na próxima aula."
-      />
+      <LeadsTable leads={leads} />
     </div>
   );
 }
