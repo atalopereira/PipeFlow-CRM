@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export default function PipelinePage() {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 duration-300 animate-in fade-in-0 slide-in-from-bottom-1">
       <PageHeader
         title="Pipeline"
         description="Acompanhe seus negócios em cada etapa do funil."

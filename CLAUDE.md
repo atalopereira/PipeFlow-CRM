@@ -62,14 +62,15 @@ docs/
 
 ## Visual Identity
 
-Starting point, inspired by the PRD's references — Pipedrive's clean, pipeline-first focus over HubSpot's denser, feature-heavy UI. Treat as a baseline to refine once real screens are being built, not a locked brand system.
+Established in M5 (redesign) — a deliberate brand system, not a placeholder.
 
-- **Feel**: clean, uncluttered, sales-focused — the pipeline and the next action should always be the visual focus of the screen.
-- **Base palette**: neutral slate grays (shadcn `slate`) for backgrounds/text/borders.
-- **Accent**: indigo (`#4F46E5`-ish) for primary actions, links, active nav state.
-- **Pipeline stage colors** (badges/columns): gray = Novo Lead, blue = Contato Realizado, amber = Proposta Enviada, violet = Negociação, green = Fechado Ganho, red = Fechado Perdido.
-- **Typography**: Inter, clear size hierarchy for dashboard stat cards (large numeral, small muted label).
+- **Feel**: dark, high-contrast, sales-focused — a near-black canvas with a single vivid accent used sparingly for emphasis, not decoration.
+- **Base palette**: near-black backgrounds (`#0C0C0E` background, `#141416`/`#1A1A1E` surfaces), light-gray text (`#E8E8E8` foreground, `#8A8A8F` muted), subtle borders (`#2A2A2E`). Defined as HSL CSS variables in `app/globals.css` (`:root` and `.dark` are identical — there is no light theme and no theme toggle; `app/layout.tsx` hardcodes `className="dark"`).
+- **Accent**: vivid lime green (`#CAFF33`) — maps to the `primary` token (buttons, links, active nav, focus rings, logo wordmark). shadcn's `accent` token remains a neutral hover-surface color, distinct from this brand accent.
+- **Pipeline stage colors** (badges/columns): unchanged — gray = Novo Lead, blue = Contato Realizado, amber = Proposta Enviada, violet = Negociação, green = Fechado Ganho, red = Fechado Perdido. These use translucent color-overlay classes (`border-{color}-500/30 bg-{color}-500/15 text-{color}-400`) that work independently of the base theme.
+- **Typography**: Syne (weights 400–800) for display/headings — page titles, section headers, stat-card numerals, the logo wordmark. DM Sans (weights 300–700) for all body/UI text (replaces Inter). IBM Plex Mono (weights 400–600) for incidental technical text. All loaded self-hosted via `next/font/google` in `app/layout.tsx`.
 - **Shape**: rounded-lg corners, card-based layout (shadcn defaults) — Kanban cards, stat cards, and stage badges are the components to get pixel-right first since they're the most-seen UI in the product.
+- **Motion**: subtle only — staggered fade/slide-up entrance for card grids and page mounts (`tailwindcss-animate`'s `animate-in` utilities), a pulsing gradient underline on the logo. No motion library added; CSS/Tailwind only.
 
 ## Development Workflow
 

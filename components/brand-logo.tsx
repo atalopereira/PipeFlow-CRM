@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Waypoints } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -9,9 +8,15 @@ interface BrandLogoProps {
 
 export function BrandLogo({ className }: BrandLogoProps) {
   return (
-    <Link href="/dashboard" className={cn("flex items-center gap-2 font-semibold", className)}>
-      <Waypoints className="h-5 w-5 text-primary" />
-      PipeFlow
+    <Link
+      href="/dashboard"
+      className={cn("relative inline-flex font-display font-extrabold", className)}
+    >
+      Pipe<span className="text-primary">Flow</span>
+      <span
+        aria-hidden
+        className="absolute -bottom-1 left-0 h-[3px] w-full origin-center animate-flowPulse rounded-full bg-gradient-to-r from-transparent via-primary to-transparent"
+      />
     </Link>
   );
 }

@@ -76,7 +76,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
   const activities = getActivitiesByLeadId(lead.id);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 duration-300 animate-in fade-in-0 slide-in-from-bottom-1">
       <PageHeader
         title={lead.name}
         description={lead.company}
@@ -162,7 +162,9 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
 
         <Card className="lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-base">Atividades ({activities.length})</CardTitle>
+            <CardTitle className="font-display text-base">
+              Atividades ({activities.length})
+            </CardTitle>
             <ActivityFormDialog
               leadId={lead.id}
               trigger={
