@@ -16,7 +16,7 @@ export function StatCard({ label, value, icon: Icon, className }: StatCardProps)
       <CardContent className="flex items-start justify-between p-6">
         <div className="space-y-1">
           <p className="text-sm text-muted-foreground">{label}</p>
-          <p className="text-3xl font-semibold tracking-tight">{value}</p>
+          <p className="font-display text-3xl font-semibold tracking-tight">{value}</p>
         </div>
         {Icon ? (
           <div className="rounded-lg bg-primary/10 p-2 text-primary">

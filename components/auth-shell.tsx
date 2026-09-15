@@ -20,7 +20,9 @@ export function AuthShell({ title, description, children, footer }: AuthShellPro
       <BrandLogo className="text-lg" />
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <h1 className="text-xl font-semibold leading-none tracking-tight">{title}</h1>
+          <h1 className="font-display text-xl font-semibold leading-none tracking-tight">
+            {title}
+          </h1>
           <CardDescription>{description}</CardDescription>
         </CardHeader>
         <CardContent>{children}</CardContent>

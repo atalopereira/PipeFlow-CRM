@@ -12,7 +12,7 @@ export default function LeadsPage() {
   const { leads } = useLeads();
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 duration-300 animate-in fade-in-0 slide-in-from-bottom-1">
       <PageHeader
         title="Leads"
         description="Gerencie seus leads e contatos."

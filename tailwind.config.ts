@@ -59,7 +59,18 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", ...defaultTheme.fontFamily.sans],
+        sans: ["var(--font-dm-sans)", ...defaultTheme.fontFamily.sans],
+        display: ["var(--font-syne)", ...defaultTheme.fontFamily.sans],
+        mono: ["var(--font-mono)", ...defaultTheme.fontFamily.mono],
+      },
+      keyframes: {
+        flowPulse: {
+          "0%, 100%": { opacity: "0.3", transform: "scaleX(0.5)" },
+          "50%": { opacity: "1", transform: "scaleX(1)" },
+        },
+      },
+      animation: {
+        flowPulse: "flowPulse 3s ease-in-out infinite",
       },
     },
   },

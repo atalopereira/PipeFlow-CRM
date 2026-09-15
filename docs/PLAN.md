@@ -40,7 +40,7 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 
 - [x] Tela de Login
 - [x] Tela de Signup
-- [x] Onboarding pós-signup: criação do workspace inicial (mock, mesmo shape que M7 vai persistir)
+- [x] Onboarding pós-signup: criação do workspace inicial (mock, mesmo shape que M8 vai persistir)
 - [x] Validação de formulário no client
 - [x] Estados de erro/loading (visuais)
 - [x] Componentes reutilizáveis extraídos onde há duplicação real entre as 3 telas (shell de auth, input de senha, botão de submit com loading)
@@ -75,7 +75,22 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 
 ---
 
-## M5 — UI: Pipeline Kanban
+## M5 — UI: Redesign Visual (Tema Dark + Lime)
+**Branch:** `feature/visual-redesign-ui`
+**Objetivo:** Nova identidade visual do produto — fundo quase-preto, accent lima (#CAFF33) e novo sistema tipográfico (Syne/DM Sans/IBM Plex Mono) — aplicada a todas as telas já construídas (auth, shell do dashboard, leads). Sem novas funcionalidades; landing page (M1) e Kanban (M6) ficam fora do escopo.
+
+- [x] Novos tokens de cor em `app/globals.css` (`:root` e `.dark` idênticos)
+- [x] Nova tipografia via `next/font/google`: Syne (display), DM Sans (corpo, substitui Inter), IBM Plex Mono (técnico)
+- [x] Wordmark do `BrandLogo` atualizado: "Pipe" + "Flow" (accent) com linha de gradiente animada
+- [x] Fonte de display aplicada em títulos de página, headers de seção e numerais dos cards de métrica
+- [x] Polish de baixo risco: gradiente no item de navegação ativo, animação de entrada nos grids de cards e nas páginas
+- [ ] QA visual em todas as telas construídas: contraste dos badges, focus rings, hover states
+
+**Commit final:** `feat: redesign visual identity with dark near-black theme, lime accent and new typography`
+
+---
+
+## M6 — UI: Pipeline Kanban
 **Branch:** `feature/kanban-ui`
 **Objetivo:** Pipeline visual funcional sobre dados mock, sem persistência.
 
@@ -87,7 +102,7 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 
 ---
 
-## M6 — UI: Dashboard de Métricas
+## M7 — UI: Dashboard de Métricas
 **Branch:** `feature/metrics-ui`
 **Objetivo:** Visualização de métricas com dados mock.
 
@@ -99,7 +114,7 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 
 ---
 
-## M7 — Backend: Supabase, Auth e Workspace
+## M8 — Backend: Supabase, Auth e Workspace
 **Branch:** `feature/supabase-auth-backend`
 **Objetivo:** Conectar autenticação e criação de workspace ao Supabase real.
 
@@ -112,7 +127,7 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 
 ---
 
-## M8 — Backend: Leads
+## M9 — Backend: Leads
 **Branch:** `feature/leads-backend`
 **Objetivo:** Substituir os dados mock de leads por dados reais.
 
@@ -124,18 +139,18 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 
 ---
 
-## M9 — Backend: Pipeline
+## M10 — Backend: Pipeline
 **Branch:** `feature/pipeline-backend`
 **Objetivo:** Persistir negócios e movimentação entre etapas.
 
 - [ ] Tabela `deals` (schema + RLS)
-- [ ] Conectar Kanban (M5) ao Supabase — criação de negócio e persistência do drag-and-drop
+- [ ] Conectar Kanban (M6) ao Supabase — criação de negócio e persistência do drag-and-drop
 
 **Commit final:** `feat: persist deals and pipeline stage changes to Supabase`
 
 ---
 
-## M10 — Backend: Atividades
+## M11 — Backend: Atividades
 **Branch:** `feature/activities-backend`
 **Objetivo:** Registro real de atividades na timeline do lead.
 
@@ -146,18 +161,18 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 
 ---
 
-## M11 — Backend: Dashboard de Métricas
+## M12 — Backend: Dashboard de Métricas
 **Branch:** `feature/metrics-backend`
 **Objetivo:** Métricas calculadas a partir de dados reais.
 
-- [ ] Queries agregadas para os cards de métricas (M6)
+- [ ] Queries agregadas para os cards de métricas (M7)
 - [ ] Conectar gráfico de funil e lista de prazos próximos a dados reais
 
 **Commit final:** `feat: compute dashboard metrics from real Supabase data`
 
 ---
 
-## M12 — Backend: Multi-empresa e Colaboração
+## M13 — Backend: Multi-empresa e Colaboração
 **Branch:** `feature/workspace-collab-backend`
 **Objetivo:** Convite de colaboradores e papéis funcionando de ponta a ponta.
 
@@ -169,7 +184,7 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 
 ---
 
-## M13 — Backend: Monetização (Stripe)
+## M14 — Backend: Monetização (Stripe)
 **Branch:** `feature/stripe-billing`
 **Objetivo:** Cobrança de assinatura funcionando ponta a ponta.
 
@@ -182,7 +197,7 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 
 ---
 
-## M14 — Deploy de Produção
+## M15 — Deploy de Produção
 **Branch:** `chore/production-deploy`
 **Objetivo:** Aplicação publicada em produção com todas as integrações configuradas.
 
@@ -195,5 +210,5 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 
 ---
 
-## Depois do M14
+## Depois do M15
 Busca/filtros avançados, permissões mais granulares, integrações via API públicas — conforme demanda, fora do escopo do MVP.
