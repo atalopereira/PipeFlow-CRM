@@ -11,7 +11,7 @@ function daysAgo(days: number): string {
   return date.toISOString();
 }
 
-const OWNERS = {
+export const OWNERS = {
   atalo: { name: "Atalo Araujo", initials: "AA" },
   camila: { name: "Camila Souza", initials: "CS" },
   rafael: { name: "Rafael Lima", initials: "RL" },
@@ -156,3 +156,7 @@ export const MOCK_LEADS: Lead[] = [
     createdAt: daysAgo(30),
   },
 ];
+
+export function getMockLeadById(id: string): Lead | undefined {
+  return MOCK_LEADS.find((lead) => lead.id === id);
+}
