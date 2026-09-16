@@ -94,9 +94,9 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 **Branch:** `feature/kanban-ui`
 **Objetivo:** Pipeline visual funcional sobre dados mock, sem persistência.
 
-- [ ] Colunas por etapa (Novo Lead → Contato → Proposta → Negociação → Ganho/Perdido)
-- [ ] Cards de negócio (título, valor, lead vinculado, responsável, prazo)
-- [ ] Drag-and-drop entre colunas com @dnd-kit (estado local apenas)
+- [x] Colunas por etapa (Novo Lead → Contato → Proposta → Negociação → Ganho/Perdido)
+- [x] Cards de negócio (título, valor, lead vinculado, responsável, prazo)
+- [x] Drag-and-drop entre colunas com @dnd-kit (estado local apenas)
 
 **Commit final:** `feat: add Kanban pipeline UI with drag-and-drop (mock data)`
 
