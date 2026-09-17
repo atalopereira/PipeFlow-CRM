@@ -3,7 +3,7 @@ import type { Deal } from "@/types/deal";
 
 // Fixed reference instant so server-render and client-hydration always
 // compute the same date strings — see lib/mock/leads.ts for the same pattern.
-const NOW = new Date("2026-09-12T12:00:00.000Z");
+export const NOW = new Date("2026-09-12T12:00:00.000Z");
 
 function addDays(days: number): string {
   const date = new Date(NOW);
@@ -49,7 +49,7 @@ export const MOCK_DEALS: Deal[] = [
     value: 28000,
     stageId: "proposta_enviada",
     owner: OWNERS.atalo,
-    dueDate: addDays(5),
+    dueDate: addDays(-3),
     createdAt: addDays(-20),
   },
   {
@@ -99,7 +99,7 @@ export const MOCK_DEALS: Deal[] = [
     value: 54000,
     stageId: "proposta_enviada",
     owner: OWNERS.rafael,
-    dueDate: addDays(7),
+    dueDate: addDays(-1),
     createdAt: addDays(-12),
   },
   {
