@@ -25,10 +25,10 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 **Branch:** `feature/landing-page-ui`
 **Objetivo:** Página pública de apresentação do produto.
 
-- [ ] Seção Hero
-- [ ] Seção de Planos e Preços (Free / Pro)
-- [ ] Seção CTA
-- [ ] Layout responsivo (mobile/desktop)
+- [x] Seção Hero
+- [x] Seção de Planos e Preços (Free / Pro)
+- [x] Seção CTA
+- [x] Layout responsivo (mobile/desktop)
 
 **Commit final:** `feat: add public landing page (hero, pricing, CTA)`
 
