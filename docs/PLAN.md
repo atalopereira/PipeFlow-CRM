@@ -106,9 +106,9 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 **Branch:** `feature/metrics-ui`
 **Objetivo:** Visualização de métricas com dados mock.
 
-- [ ] Cards: total de leads, negócios abertos, valor total do pipeline, taxa de conversão
-- [ ] Gráfico de funil de vendas (Recharts) sobre dados mock
-- [ ] Lista de negócios com prazo próximo
+- [x] Cards: total de leads, negócios abertos, valor total do pipeline, taxa de conversão
+- [x] Gráfico de funil de vendas (Recharts) sobre dados mock
+- [x] Lista de negócios com prazo próximo
 
 **Commit final:** `feat: add metrics dashboard with funnel chart (mock data)`
 

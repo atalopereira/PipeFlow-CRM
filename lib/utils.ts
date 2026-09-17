@@ -37,9 +37,11 @@ export function formatDateTimeShort(iso: string): string {
 
 export function formatDateOnly(isoDate: string): string {
   const [year, month, day] = isoDate.split("-").map(Number);
-  return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short" }).format(
-    new Date(year, month - 1, day)
-  );
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+  }).format(new Date(year, month - 1, day));
 }
 
 export function formatCurrency(value: number): string {
