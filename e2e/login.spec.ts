@@ -1,5 +1,12 @@
 import { expect, test } from "@playwright/test";
 
+import {
+  createConfirmedTestUser,
+  createTestWorkspace,
+  deleteTestUser,
+  uniqueTestEmail,
+} from "./helpers/supabase-admin";
+
 test.describe("Login", () => {
   test("shows inline validation errors on empty submit", async ({ page }) => {
     await page.goto("/login");
@@ -29,13 +36,26 @@ test.describe("Login", () => {
   });
 
   test("shows loading state and redirects to dashboard on submit", async ({ page }) => {
-    await page.goto("/login");
-    await page.getByLabel("E-mail").fill("teste@pipeflow.com");
-    await page.getByLabel("Senha", { exact: true }).fill("senha123");
-    await page.getByRole("button", { name: "Entrar" }).click();
+    const email = uniqueTestEmail();
+    const password = "senha123456";
 
-    await expect(page.getByRole("button", { name: "Entrando..." })).toBeDisabled();
-    await expect(page).toHaveURL("/dashboard");
-    await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
+    try {
+      // Created pre-confirmed + with a workspace via the admin API (no real
+      // e-mail sent), so login alone can be asserted to land on the
+      // dashboard rather than onboarding.
+      const userId = await createConfirmedTestUser(email, password, "Atalo Araujo");
+      await createTestWorkspace(userId, "Acme Vendas");
+
+      await page.goto("/login");
+      await page.getByLabel("E-mail").fill(email);
+      await page.getByLabel("Senha", { exact: true }).fill(password);
+      await page.getByRole("button", { name: "Entrar" }).click();
+
+      await expect(page.getByRole("button", { name: "Entrando..." })).toBeDisabled();
+      await expect(page).toHaveURL("/dashboard");
+      await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
+    } finally {
+      await deleteTestUser(email);
+    }
   });
 });

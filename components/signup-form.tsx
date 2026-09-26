@@ -1,13 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { MailCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { signUp } from "@/lib/actions/auth";
 import { PasswordInput } from "@/components/password-input";
 import { SubmitButton } from "@/components/submit-button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Form,
   FormControl,
@@ -33,24 +35,51 @@ const signupSchema = z
 type SignupValues = z.infer<typeof signupSchema>;
 
 export function SignupForm() {
-  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [formError, setFormError] = React.useState<string | null>(null);
+  const [confirmationEmail, setConfirmationEmail] = React.useState<string | null>(null);
 
   const form = useForm<SignupValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
   });
 
-  function onSubmit() {
+  async function onSubmit(values: SignupValues) {
+    setFormError(null);
     setIsSubmitting(true);
-    setTimeout(() => {
-      router.push("/onboarding");
-    }, 600);
+    const result = await signUp(values.name, values.email, values.password);
+    if (result?.error) {
+      setFormError(result.error);
+      setIsSubmitting(false);
+      return;
+    }
+    if (result?.needsConfirmation) {
+      setConfirmationEmail(values.email);
+      setIsSubmitting(false);
+    }
+  }
+
+  if (confirmationEmail) {
+    return (
+      <div className="flex flex-col items-center gap-3 py-2 text-center">
+        <MailCheck className="h-10 w-10 text-primary" />
+        <p className="text-sm text-muted-foreground">
+          Enviamos um link de confirmação para{" "}
+          <span className="font-medium text-foreground">{confirmationEmail}</span>. Clique no
+          link para ativar sua conta e continuar.
+        </p>
+      </div>
+    );
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-4">
+        {formError ? (
+          <Alert variant="destructive">
+            <AlertDescription>{formError}</AlertDescription>
+          </Alert>
+        ) : null}
         <FormField
           control={form.control}
           name="name"

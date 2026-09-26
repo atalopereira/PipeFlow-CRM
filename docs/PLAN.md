@@ -118,10 +118,10 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 **Branch:** `feature/supabase-auth-backend`
 **Objetivo:** Conectar autenticação e criação de workspace ao Supabase real.
 
-- [ ] Criar projeto Supabase + schema inicial (`workspaces`, `users`/profiles)
-- [ ] Configurar Supabase Auth e conectar às telas de login/signup (M2)
-- [ ] Fluxo de criação de workspace no onboarding
-- [ ] RLS habilitada nas tabelas criadas (isolamento por `workspace_id`)
+- [x] Criar projeto Supabase + schema inicial (`workspaces`, `users`/profiles)
+- [x] Configurar Supabase Auth e conectar às telas de login/signup (M2)
+- [x] Fluxo de criação de workspace no onboarding
+- [x] RLS habilitada nas tabelas criadas (isolamento por `workspace_id`)
 
 **Commit final:** `feat: connect auth and workspace creation to Supabase with RLS`
 
