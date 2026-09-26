@@ -1,12 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { createWorkspace } from "@/lib/actions/auth";
 import { SubmitButton } from "@/components/submit-button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Form,
   FormControl,
@@ -25,24 +26,32 @@ const onboardingSchema = z.object({
 type OnboardingValues = z.infer<typeof onboardingSchema>;
 
 export function OnboardingForm() {
-  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [formError, setFormError] = React.useState<string | null>(null);
 
   const form = useForm<OnboardingValues>({
     resolver: zodResolver(onboardingSchema),
     defaultValues: { workspaceName: "" },
   });
 
-  function onSubmit() {
+  async function onSubmit(values: OnboardingValues) {
+    setFormError(null);
     setIsSubmitting(true);
-    setTimeout(() => {
-      router.push("/dashboard");
-    }, 600);
+    const result = await createWorkspace(values.workspaceName);
+    if (result?.error) {
+      setFormError(result.error);
+      setIsSubmitting(false);
+    }
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-4">
+        {formError ? (
+          <Alert variant="destructive">
+            <AlertDescription>{formError}</AlertDescription>
+          </Alert>
+        ) : null}
         <FormField
           control={form.control}
           name="workspaceName"

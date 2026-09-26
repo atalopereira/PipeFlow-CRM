@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Building2, Check, ChevronsUpDown, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -12,13 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MOCK_CURRENT_WORKSPACE_ID, MOCK_WORKSPACES } from "@/lib/mock/workspace";
+import { useWorkspace } from "@/components/workspace-provider";
 
 export function WorkspaceSwitcher() {
-  const [currentWorkspaceId, setCurrentWorkspaceId] = useState(MOCK_CURRENT_WORKSPACE_ID);
-  const currentWorkspace =
-    MOCK_WORKSPACES.find((workspace) => workspace.id === currentWorkspaceId) ??
-    MOCK_WORKSPACES[0];
+  const { workspaces, currentWorkspace, switchWorkspace } = useWorkspace();
 
   return (
     <DropdownMenu>
@@ -38,10 +34,10 @@ export function WorkspaceSwitcher() {
         <DropdownMenuLabel className="text-xs text-muted-foreground">
           Workspaces
         </DropdownMenuLabel>
-        {MOCK_WORKSPACES.map((workspace) => (
+        {workspaces.map((workspace) => (
           <DropdownMenuItem
             key={workspace.id}
-            onSelect={() => setCurrentWorkspaceId(workspace.id)}
+            onSelect={() => switchWorkspace(workspace.id)}
             className="justify-between"
           >
             <span className="flex min-w-0 items-center gap-2">
@@ -51,7 +47,7 @@ export function WorkspaceSwitcher() {
                 {workspace.plan}
               </span>
             </span>
-            {workspace.id === currentWorkspaceId ? (
+            {workspace.id === currentWorkspace.id ? (
               <Check className="h-4 w-4 shrink-0 text-primary" />
             ) : null}
           </DropdownMenuItem>
