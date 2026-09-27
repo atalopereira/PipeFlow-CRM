@@ -19,7 +19,7 @@ interface LeadFormDialogProps {
   trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  onSuccess?: (lead: Lead) => void;
+  onSuccess?: (leadId: string) => void;
 }
 
 export function LeadFormDialog({
@@ -50,9 +50,9 @@ export function LeadFormDialog({
         <LeadForm
           mode={mode}
           lead={lead}
-          onSuccess={(result) => {
+          onSuccess={(leadId) => {
             setOpen(false);
-            onSuccess?.(result);
+            onSuccess?.(leadId);
           }}
         />
       </DialogContent>

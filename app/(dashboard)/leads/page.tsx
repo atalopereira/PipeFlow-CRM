@@ -1,15 +1,31 @@
-"use client";
-
 import { Plus } from "lucide-react";
 
 import { LeadFormDialog } from "@/components/lead-form-dialog";
 import { LeadsTable } from "@/components/leads-table";
-import { useLeads } from "@/components/leads-provider";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { LEAD_STATUS_IDS, type LeadStatusId } from "@/lib/constants/lead-status";
+import { getLeads } from "@/lib/leads";
+import { createClient } from "@/lib/supabase/server";
+import { getCurrentWorkspaceId } from "@/lib/workspace";
 
-export default function LeadsPage() {
-  const { leads } = useLeads();
+interface LeadsPageProps {
+  searchParams: { q?: string; status?: string };
+}
+
+function parseStatusFilter(value: string | undefined): "todos" | LeadStatusId {
+  return value && LEAD_STATUS_IDS.includes(value as LeadStatusId) ? (value as LeadStatusId) : "todos";
+}
+
+export default async function LeadsPage({ searchParams }: LeadsPageProps) {
+  const search = searchParams.q ?? "";
+  const statusFilter = parseStatusFilter(searchParams.status);
+
+  const supabase = await createClient();
+  const workspaceId = await getCurrentWorkspaceId(supabase);
+  const leads = workspaceId
+    ? await getLeads(supabase, workspaceId, { search, statusId: statusFilter })
+    : [];
 
   return (
     <div className="flex flex-col gap-6 duration-300 animate-in fade-in-0 slide-in-from-bottom-1">
@@ -28,7 +44,7 @@ export default function LeadsPage() {
           />
         }
       />
-      <LeadsTable leads={leads} />
+      <LeadsTable leads={leads} initialSearch={search} initialStatus={statusFilter} />
     </div>
   );
 }

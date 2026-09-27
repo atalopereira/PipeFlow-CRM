@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { ActivityForm } from "@/components/activity-form";
+import { ActivityForm, type ActivityFormValues } from "@/components/activity-form";
 import {
   Dialog,
   DialogContent,
@@ -16,10 +16,16 @@ import type { Activity } from "@/types/activity";
 interface ActivityFormDialogProps {
   leadId: string;
   trigger: React.ReactNode;
+  onAddActivity: (leadId: string, input: ActivityFormValues) => Activity;
   onSuccess?: (activity: Activity) => void;
 }
 
-export function ActivityFormDialog({ leadId, trigger, onSuccess }: ActivityFormDialogProps) {
+export function ActivityFormDialog({
+  leadId,
+  trigger,
+  onAddActivity,
+  onSuccess,
+}: ActivityFormDialogProps) {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -32,6 +38,7 @@ export function ActivityFormDialog({ leadId, trigger, onSuccess }: ActivityFormD
         </DialogHeader>
         <ActivityForm
           leadId={leadId}
+          onAddActivity={onAddActivity}
           onSuccess={(activity) => {
             setOpen(false);
             onSuccess?.(activity);

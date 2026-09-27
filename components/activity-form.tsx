@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { useLeads } from "@/components/leads-provider";
 import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
@@ -45,11 +44,11 @@ function toDatetimeLocalValue(date: Date): string {
 
 interface ActivityFormProps {
   leadId: string;
+  onAddActivity: (leadId: string, input: ActivityFormValues) => Activity;
   onSuccess: (activity: Activity) => void;
 }
 
-export function ActivityForm({ leadId, onSuccess }: ActivityFormProps) {
-  const { addActivity } = useLeads();
+export function ActivityForm({ leadId, onAddActivity, onSuccess }: ActivityFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const form = useForm<ActivityFormValues>({
@@ -67,7 +66,7 @@ export function ActivityForm({ leadId, onSuccess }: ActivityFormProps) {
     setTimeout(() => {
       setIsSubmitting(false);
       onSuccess(
-        addActivity(leadId, {
+        onAddActivity(leadId, {
           ...values,
           date: new Date(values.date).toISOString(),
         })
