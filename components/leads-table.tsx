@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { MoreHorizontal, Pencil, Search, Trash2, Users } from "lucide-react";
 
 import { DeleteLeadDialog } from "@/components/delete-lead-dialog";
@@ -40,25 +41,45 @@ type StatusFilter = "todos" | Lead["statusId"];
 
 interface LeadsTableProps {
   leads: Lead[];
+  initialSearch: string;
+  initialStatus: StatusFilter;
 }
 
-export function LeadsTable({ leads }: LeadsTableProps) {
-  const [search, setSearch] = React.useState("");
-  const [statusFilter, setStatusFilter] = React.useState<StatusFilter>("todos");
+const SEARCH_DEBOUNCE_MS = 350;
+
+export function LeadsTable({ leads, initialSearch, initialStatus }: LeadsTableProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [search, setSearch] = React.useState(initialSearch);
   const [editingLead, setEditingLead] = React.useState<Lead | null>(null);
   const [deletingLead, setDeletingLead] = React.useState<Lead | null>(null);
+  const debounceRef = React.useRef<ReturnType<typeof setTimeout>>();
 
-  const filteredLeads = React.useMemo(() => {
-    const query = search.trim().toLowerCase();
-    return leads.filter((lead) => {
-      const matchesSearch =
-        query.length === 0 ||
-        lead.name.toLowerCase().includes(query) ||
-        lead.company.toLowerCase().includes(query);
-      const matchesStatus = statusFilter === "todos" || lead.statusId === statusFilter;
-      return matchesSearch && matchesStatus;
-    });
-  }, [leads, search, statusFilter]);
+  function navigate(params: { q?: string; status?: StatusFilter }) {
+    const next = new URLSearchParams();
+    const q = params.q ?? search;
+    const status = params.status ?? initialStatus;
+    if (q.trim()) next.set("q", q.trim());
+    if (status !== "todos") next.set("status", status);
+    const query = next.toString();
+    router.push(query ? `${pathname}?${query}` : pathname);
+  }
+
+  function handleSearchChange(value: string) {
+    setSearch(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => navigate({ q: value }), SEARCH_DEBOUNCE_MS);
+  }
+
+  function handleStatusChange(value: StatusFilter) {
+    navigate({ status: value });
+  }
+
+  React.useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col gap-4">
@@ -68,14 +89,11 @@ export function LeadsTable({ leads }: LeadsTableProps) {
           <Input
             placeholder="Buscar por nome ou empresa..."
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) => handleSearchChange(event.target.value)}
             className="pl-8"
           />
         </div>
-        <Select
-          value={statusFilter}
-          onValueChange={(value) => setStatusFilter(value as StatusFilter)}
-        >
+        <Select value={initialStatus} onValueChange={(value) => handleStatusChange(value as StatusFilter)}>
           <SelectTrigger className="sm:w-48">
             <SelectValue />
           </SelectTrigger>
@@ -90,7 +108,7 @@ export function LeadsTable({ leads }: LeadsTableProps) {
         </Select>
       </div>
 
-      {filteredLeads.length === 0 ? (
+      {leads.length === 0 ? (
         <EmptyState
           icon={Users}
           title="Nenhum lead encontrado"
@@ -110,7 +128,7 @@ export function LeadsTable({ leads }: LeadsTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredLeads.map((lead) => (
+            {leads.map((lead) => (
               <TableRow key={lead.id}>
                 <TableCell className="whitespace-nowrap">
                   <Link href={`/leads/${lead.id}`} className="hover:underline">

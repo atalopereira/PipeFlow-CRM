@@ -1,11 +1,13 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
-import { parseEstimatedValue, useLeads } from "@/components/leads-provider";
+import { createLead, updateLead } from "@/lib/actions/leads";
+import { leadFormSchema, type LeadFormValues } from "@/lib/validations/lead";
+import { useWorkspace } from "@/components/workspace-provider";
 import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
@@ -26,39 +28,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  DEFAULT_LEAD_STATUS_ID,
-  LEAD_STATUSES,
-  LEAD_STATUS_IDS,
-} from "@/lib/constants/lead-status";
+import { DEFAULT_LEAD_STATUS_ID, LEAD_STATUSES } from "@/lib/constants/lead-status";
 import type { Lead } from "@/types/lead";
 
-const leadFormSchema = z.object({
-  name: z.string().trim().min(2, "Informe o nome do lead"),
-  email: z.string().trim().min(1, "Informe o e-mail").email("E-mail inválido"),
-  phone: z.string().trim().min(8, "Informe um telefone válido"),
-  company: z.string().trim().min(1, "Informe a empresa"),
-  role: z.string().trim(),
-  statusId: z.enum(LEAD_STATUS_IDS),
-  estimatedValue: z
-    .string()
-    .trim()
-    .optional()
-    .refine((val) => !val || !Number.isNaN(Number(val)), "Informe um valor numérico válido"),
-  notes: z.string().trim().optional(),
-});
-
-export type LeadFormValues = z.infer<typeof leadFormSchema>;
+export type { LeadFormValues };
 
 interface LeadFormProps {
   mode: "create" | "edit";
   lead?: Lead;
-  onSuccess: (lead: Lead) => void;
+  onSuccess: (leadId: string) => void;
 }
 
 export function LeadForm({ mode, lead, onSuccess }: LeadFormProps) {
-  const { addLead, updateLead, getLeadById } = useLeads();
+  const router = useRouter();
+  const { currentWorkspace } = useWorkspace();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [formError, setFormError] = React.useState<string | null>(null);
 
   const form = useForm<LeadFormValues>({
     resolver: zodResolver(leadFormSchema),
@@ -74,23 +59,24 @@ export function LeadForm({ mode, lead, onSuccess }: LeadFormProps) {
     },
   });
 
-  function onSubmit(values: LeadFormValues) {
+  async function onSubmit(values: LeadFormValues) {
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      if (mode === "create") {
-        onSuccess(addLead(values));
-      } else if (lead) {
-        updateLead(lead.id, values);
-        onSuccess(
-          getLeadById(lead.id) ?? {
-            ...lead,
-            ...values,
-            estimatedValue: parseEstimatedValue(values.estimatedValue),
-          }
-        );
-      }
-    }, 600);
+    setFormError(null);
+
+    const result =
+      mode === "create"
+        ? await createLead(currentWorkspace.id, values)
+        : await updateLead(currentWorkspace.id, lead!.id, values);
+
+    setIsSubmitting(false);
+
+    if (result.error || !result.leadId) {
+      setFormError(result.error ?? "Não foi possível salvar o lead.");
+      return;
+    }
+
+    router.refresh();
+    onSuccess(result.leadId);
   }
 
   return (
@@ -213,6 +199,7 @@ export function LeadForm({ mode, lead, onSuccess }: LeadFormProps) {
             )}
           />
         </div>
+        {formError ? <p className="text-sm text-destructive">{formError}</p> : null}
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="outline">

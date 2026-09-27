@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 
 import {
   AlertDialog,
@@ -14,7 +15,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { buttonVariants } from "@/components/ui/button";
-import { useLeads } from "@/components/leads-provider";
+import { useWorkspace } from "@/components/workspace-provider";
+import { deleteLead } from "@/lib/actions/leads";
 import { cn } from "@/lib/utils";
 import type { Lead } from "@/types/lead";
 
@@ -33,11 +35,27 @@ export function DeleteLeadDialog({
   onOpenChange,
   onDeleted,
 }: DeleteLeadDialogProps) {
-  const { deleteLead } = useLeads();
+  const router = useRouter();
+  const { currentWorkspace } = useWorkspace();
+  const [isDeleting, setIsDeleting] = React.useState(false);
   const [internalOpen, setInternalOpen] = React.useState(false);
   const isControlled = openProp !== undefined;
   const open = isControlled ? openProp : internalOpen;
   const setOpen = isControlled ? (onOpenChange ?? (() => {})) : setInternalOpen;
+
+  async function handleDelete() {
+    setIsDeleting(true);
+    const result = await deleteLead(currentWorkspace.id, lead.id);
+    setIsDeleting(false);
+
+    if (result.error) {
+      return;
+    }
+
+    router.refresh();
+    setOpen(false);
+    onDeleted?.();
+  }
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -54,12 +72,13 @@ export function DeleteLeadDialog({
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction
             className={cn(buttonVariants({ variant: "destructive" }))}
-            onClick={() => {
-              deleteLead(lead.id);
-              onDeleted?.();
+            disabled={isDeleting}
+            onClick={(event) => {
+              event.preventDefault();
+              void handleDelete();
             }}
           >
-            Excluir
+            {isDeleting ? "Excluindo..." : "Excluir"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

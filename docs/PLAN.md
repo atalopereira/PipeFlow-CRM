@@ -131,9 +131,9 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 **Branch:** `feature/leads-backend`
 **Objetivo:** Substituir os dados mock de leads por dados reais.
 
-- [ ] Tabela `leads` (schema + RLS por `workspace_id`)
-- [ ] Conectar listagem, busca e filtros (M4) ao Supabase
-- [ ] Conectar formulário de criação/edição e página de detalhe
+- [x] Tabela `leads` (schema + RLS por `workspace_id`)
+- [x] Conectar listagem, busca e filtros (M4) ao Supabase
+- [x] Conectar formulário de criação/edição e página de detalhe
 
 **Commit final:** `feat: connect leads UI to Supabase (CRUD + RLS)`
 
