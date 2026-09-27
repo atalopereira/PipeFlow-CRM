@@ -11,13 +11,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Deal } from "@/types/deal";
 
 interface DealFormDialogProps {
   trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  onSuccess?: (deal: Deal) => void;
+  onSuccess?: () => void;
 }
 
 export function DealFormDialog({
@@ -40,9 +39,9 @@ export function DealFormDialog({
           <DialogDescription>Cadastre um novo negócio no seu funil de vendas.</DialogDescription>
         </DialogHeader>
         <DealForm
-          onSuccess={(deal) => {
+          onSuccess={() => {
             setOpen(false);
-            onSuccess?.(deal);
+            onSuccess?.();
           }}
         />
       </DialogContent>

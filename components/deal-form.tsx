@@ -3,7 +3,6 @@
 import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { useDeals } from "@/components/deals-provider";
 import { SubmitButton } from "@/components/submit-button";
@@ -25,38 +24,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  DEFAULT_PIPELINE_STAGE_ID,
-  PIPELINE_STAGES,
-  PIPELINE_STAGE_IDS,
-} from "@/lib/constants/pipeline";
-import { MOCK_LEADS } from "@/lib/mock/leads";
-import type { Deal } from "@/types/deal";
+import { DEFAULT_PIPELINE_STAGE_ID, PIPELINE_STAGES } from "@/lib/constants/pipeline";
+import { dealFormSchema, type DealFormValues } from "@/lib/validations/deal";
 
-const dealFormSchema = z.object({
-  title: z.string().trim().min(2, "Informe o nome do negócio"),
-  leadId: z.string().min(1, "Selecione um lead"),
-  value: z
-    .string()
-    .trim()
-    .min(1, "Informe o valor")
-    .refine(
-      (val) => !Number.isNaN(Number(val)) && Number(val) > 0,
-      "Informe um valor numérico válido"
-    ),
-  stageId: z.enum(PIPELINE_STAGE_IDS),
-  dueDate: z.string().min(1, "Informe o prazo"),
-});
-
-export type DealFormValues = z.infer<typeof dealFormSchema>;
+export type { DealFormValues };
 
 interface DealFormProps {
-  onSuccess: (deal: Deal) => void;
+  onSuccess: () => void;
 }
 
 export function DealForm({ onSuccess }: DealFormProps) {
-  const { addDeal } = useDeals();
+  const { addDeal, leads } = useDeals();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [formError, setFormError] = React.useState<string | null>(null);
 
   const form = useForm<DealFormValues>({
     resolver: zodResolver(dealFormSchema),
@@ -69,12 +49,20 @@ export function DealForm({ onSuccess }: DealFormProps) {
     },
   });
 
-  function onSubmit(values: DealFormValues) {
+  async function onSubmit(values: DealFormValues) {
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      onSuccess(addDeal(values));
-    }, 600);
+    setFormError(null);
+
+    const result = await addDeal(values);
+
+    setIsSubmitting(false);
+
+    if (result.error) {
+      setFormError(result.error);
+      return;
+    }
+
+    onSuccess();
   }
 
   return (
@@ -107,7 +95,7 @@ export function DealForm({ onSuccess }: DealFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {MOCK_LEADS.map((lead) => (
+                    {leads.map((lead) => (
                       <SelectItem key={lead.id} value={lead.id}>
                         {lead.name} · {lead.company}
                       </SelectItem>
@@ -169,6 +157,7 @@ export function DealForm({ onSuccess }: DealFormProps) {
             )}
           />
         </div>
+        {formError ? <p className="text-sm text-destructive">{formError}</p> : null}
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="outline">

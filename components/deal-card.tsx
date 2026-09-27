@@ -7,7 +7,6 @@ import { CalendarDays } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { UserAvatar } from "@/components/user-avatar";
 import { PIPELINE_STAGE_MAP } from "@/lib/constants/pipeline";
-import { getMockLeadById } from "@/lib/mock/leads";
 import { cn, formatCurrency, formatDateOnly } from "@/lib/utils";
 import type { Deal } from "@/types/deal";
 
@@ -17,7 +16,6 @@ interface DealCardViewProps extends React.ComponentPropsWithoutRef<typeof Card> 
 
 export const DealCardView = React.forwardRef<HTMLDivElement, DealCardViewProps>(
   ({ deal, className, ...props }, ref) => {
-    const lead = getMockLeadById(deal.leadId);
     const stage = PIPELINE_STAGE_MAP[deal.stageId];
 
     return (
@@ -32,11 +30,9 @@ export const DealCardView = React.forwardRef<HTMLDivElement, DealCardViewProps>(
       >
         <div className="flex flex-col gap-2">
           <p className="text-sm font-medium leading-snug">{deal.title}</p>
-          {lead ? (
-            <p className="truncate text-xs text-muted-foreground">
-              {lead.name} · {lead.company}
-            </p>
-          ) : null}
+          <p className="truncate text-xs text-muted-foreground">
+            {deal.lead.name} · {deal.lead.company}
+          </p>
           <p className="font-display text-base font-semibold tracking-tight">
             {formatCurrency(deal.value)}
           </p>
