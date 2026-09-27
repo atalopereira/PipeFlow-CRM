@@ -1,5 +1,5 @@
-import { OWNERS } from "@/lib/mock/leads";
-import type { Deal } from "@/types/deal";
+import { getMockLeadById, OWNERS } from "@/lib/mock/leads";
+import type { Deal, DealLeadRef } from "@/types/deal";
 
 // Fixed reference instant so server-render and client-hydration always
 // compute the same date strings — see lib/mock/leads.ts for the same pattern.
@@ -11,7 +11,14 @@ function addDays(days: number): string {
   return date.toISOString().slice(0, 10);
 }
 
-export const MOCK_DEALS: Deal[] = [
+function leadRef(leadId: string): DealLeadRef {
+  const lead = getMockLeadById(leadId);
+  return { name: lead?.name ?? "Lead removido", company: lead?.company ?? "" };
+}
+
+type MockDeal = Omit<Deal, "lead">;
+
+const RAW_DEALS: MockDeal[] = [
   {
     id: "deal_001",
     title: "Plano Enterprise Construtora Alfa",
@@ -163,3 +170,8 @@ export const MOCK_DEALS: Deal[] = [
     createdAt: addDays(-8),
   },
 ];
+
+export const MOCK_DEALS: Deal[] = RAW_DEALS.map((deal) => ({
+  ...deal,
+  lead: leadRef(deal.leadId),
+}));

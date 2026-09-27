@@ -1,10 +1,16 @@
 import type { PipelineStageId } from "@/lib/constants/pipeline";
 import type { LeadOwner } from "@/types/lead";
 
+export interface DealLeadRef {
+  name: string;
+  company: string;
+}
+
 export interface Deal {
   id: string;
   title: string;
   leadId: string;
+  lead: DealLeadRef;
   value: number;
   stageId: PipelineStageId;
   owner: LeadOwner;

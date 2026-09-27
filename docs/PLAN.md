@@ -143,8 +143,8 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 **Branch:** `feature/pipeline-backend`
 **Objetivo:** Persistir negócios e movimentação entre etapas.
 
-- [ ] Tabela `deals` (schema + RLS)
-- [ ] Conectar Kanban (M6) ao Supabase — criação de negócio e persistência do drag-and-drop
+- [x] Tabela `deals` (schema + RLS)
+- [x] Conectar Kanban (M6) ao Supabase — criação de negócio e persistência do drag-and-drop
 
 **Commit final:** `feat: persist deals and pipeline stage changes to Supabase`
 

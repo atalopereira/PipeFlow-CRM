@@ -1,44 +1,75 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 
-import { MOCK_DEALS } from "@/lib/mock/deals";
-import { MOCK_CURRENT_USER } from "@/lib/mock/workspace";
+import { useWorkspace } from "@/components/workspace-provider";
+import { createDeal, updateDealStage } from "@/lib/actions/deals";
 import type { PipelineStageId } from "@/lib/constants/pipeline";
 import type { Deal } from "@/types/deal";
+import type { Lead } from "@/types/lead";
 import type { DealFormValues } from "@/components/deal-form";
+
+interface DealActionResult {
+  error?: string;
+}
 
 interface DealsContextValue {
   deals: Deal[];
-  addDeal: (input: DealFormValues) => Deal;
+  leads: Lead[];
+  addDeal: (input: DealFormValues) => Promise<DealActionResult>;
   moveDeal: (id: string, stageId: PipelineStageId) => void;
 }
 
 const DealsContext = React.createContext<DealsContextValue | null>(null);
 
-export function DealsProvider({ children }: { children: React.ReactNode }) {
-  const [deals, setDeals] = React.useState<Deal[]>(MOCK_DEALS);
+interface DealsProviderProps {
+  initialDeals: Deal[];
+  leads: Lead[];
+  children: React.ReactNode;
+}
 
-  const addDeal = React.useCallback((input: DealFormValues): Deal => {
-    const newDeal: Deal = {
-      id: `deal_${crypto.randomUUID()}`,
-      title: input.title,
-      leadId: input.leadId,
-      value: Number(input.value),
-      stageId: input.stageId,
-      dueDate: input.dueDate,
-      owner: { name: MOCK_CURRENT_USER.name, initials: MOCK_CURRENT_USER.initials },
-      createdAt: new Date().toISOString(),
-    };
-    setDeals((prev) => [newDeal, ...prev]);
-    return newDeal;
-  }, []);
+export function DealsProvider({ initialDeals, leads, children }: DealsProviderProps) {
+  const router = useRouter();
+  const { currentWorkspace } = useWorkspace();
+  const [deals, setDeals] = React.useState<Deal[]>(initialDeals);
 
-  const moveDeal = React.useCallback((id: string, stageId: PipelineStageId) => {
-    setDeals((prev) => prev.map((deal) => (deal.id === id ? { ...deal, stageId } : deal)));
-  }, []);
+  React.useEffect(() => {
+    setDeals(initialDeals);
+  }, [initialDeals]);
 
-  const value = React.useMemo(() => ({ deals, addDeal, moveDeal }), [deals, addDeal, moveDeal]);
+  const addDeal = React.useCallback(
+    async (input: DealFormValues): Promise<DealActionResult> => {
+      const result = await createDeal(currentWorkspace.id, input);
+      if (result.error) {
+        return { error: result.error };
+      }
+      router.refresh();
+      return {};
+    },
+    [currentWorkspace.id, router]
+  );
+
+  const moveDeal = React.useCallback(
+    (id: string, stageId: PipelineStageId) => {
+      const previousStageId = deals.find((deal) => deal.id === id)?.stageId;
+      setDeals((prev) => prev.map((deal) => (deal.id === id ? { ...deal, stageId } : deal)));
+
+      void updateDealStage(currentWorkspace.id, id, stageId).then((result) => {
+        if (result.error && previousStageId) {
+          setDeals((prev) =>
+            prev.map((deal) => (deal.id === id ? { ...deal, stageId: previousStageId } : deal))
+          );
+        }
+      });
+    },
+    [deals, currentWorkspace.id]
+  );
+
+  const value = React.useMemo(
+    () => ({ deals, leads, addDeal, moveDeal }),
+    [deals, leads, addDeal, moveDeal]
+  );
 
   return <DealsContext.Provider value={value}>{children}</DealsContext.Provider>;
 }
