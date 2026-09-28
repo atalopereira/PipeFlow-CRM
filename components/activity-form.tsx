@@ -3,7 +3,6 @@
 import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
@@ -25,17 +24,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ACTIVITY_TYPES, ACTIVITY_TYPE_IDS } from "@/lib/constants/activity-type";
-import type { Activity } from "@/types/activity";
+import { ACTIVITY_TYPES } from "@/lib/constants/activity-type";
+import { activityFormSchema, type ActivityFormValues } from "@/lib/validations/activity";
 
-const activityFormSchema = z.object({
-  type: z.enum(ACTIVITY_TYPE_IDS),
-  title: z.string().trim().min(2, "Informe um título"),
-  description: z.string().trim().min(1, "Informe uma descrição"),
-  date: z.string().min(1, "Informe a data"),
-});
-
-export type ActivityFormValues = z.infer<typeof activityFormSchema>;
+export type { ActivityFormValues };
 
 function toDatetimeLocalValue(date: Date): string {
   const pad = (value: number) => String(value).padStart(2, "0");
@@ -44,12 +36,13 @@ function toDatetimeLocalValue(date: Date): string {
 
 interface ActivityFormProps {
   leadId: string;
-  onAddActivity: (leadId: string, input: ActivityFormValues) => Activity;
-  onSuccess: (activity: Activity) => void;
+  onAddActivity: (leadId: string, input: ActivityFormValues) => Promise<{ error?: string }>;
+  onSuccess: () => void;
 }
 
 export function ActivityForm({ leadId, onAddActivity, onSuccess }: ActivityFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [formError, setFormError] = React.useState<string | null>(null);
 
   const form = useForm<ActivityFormValues>({
     resolver: zodResolver(activityFormSchema),
@@ -61,17 +54,23 @@ export function ActivityForm({ leadId, onAddActivity, onSuccess }: ActivityFormP
     },
   });
 
-  function onSubmit(values: ActivityFormValues) {
+  async function onSubmit(values: ActivityFormValues) {
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      onSuccess(
-        onAddActivity(leadId, {
-          ...values,
-          date: new Date(values.date).toISOString(),
-        })
-      );
-    }, 600);
+    setFormError(null);
+
+    const result = await onAddActivity(leadId, {
+      ...values,
+      date: new Date(values.date).toISOString(),
+    });
+
+    setIsSubmitting(false);
+
+    if (result.error) {
+      setFormError(result.error);
+      return;
+    }
+
+    onSuccess();
   }
 
   return (
@@ -142,6 +141,7 @@ export function ActivityForm({ leadId, onAddActivity, onSuccess }: ActivityFormP
             )}
           />
         </div>
+        {formError ? <p className="text-sm text-destructive">{formError}</p> : null}
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="outline">

@@ -154,8 +154,8 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 **Branch:** `feature/activities-backend`
 **Objetivo:** Registro real de atividades na timeline do lead.
 
-- [ ] Tabela `activities` (tipo, autor, descrição, data + RLS)
-- [ ] Conectar timeline do lead (M4) para ler/gravar atividades reais
+- [x] Tabela `activities` (tipo, autor, descrição, data + RLS)
+- [x] Conectar timeline do lead (M4) para ler/gravar atividades reais
 
 **Commit final:** `feat: connect activity timeline to Supabase`
 
