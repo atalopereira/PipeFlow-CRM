@@ -27,7 +27,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { MOCK_ACTIVITIES } from "@/lib/mock/activities";
+import { useWorkspace } from "@/components/workspace-provider";
+import { createActivity } from "@/lib/actions/activities";
 import { formatCurrency, formatDateLong, getInitials } from "@/lib/utils";
 import type { Activity } from "@/types/activity";
 import type { Lead } from "@/types/lead";
@@ -52,27 +53,28 @@ function ProfileField({ icon: Icon, label, value }: ProfileFieldProps) {
 
 interface LeadDetailViewProps {
   lead: Lead;
+  activities: Activity[];
 }
 
-export function LeadDetailView({ lead }: LeadDetailViewProps) {
+export function LeadDetailView({ lead, activities: initialActivities }: LeadDetailViewProps) {
   const router = useRouter();
-  // Activities are still mock data — wired to Supabase in M11 (activities backend).
-  const [activities, setActivities] = React.useState<Activity[]>(() =>
-    MOCK_ACTIVITIES.filter((activity) => activity.leadId === lead.id)
-  );
+  const { currentWorkspace } = useWorkspace();
+  const [activities, setActivities] = React.useState<Activity[]>(initialActivities);
+
+  React.useEffect(() => {
+    setActivities(initialActivities);
+  }, [initialActivities]);
 
   const addActivity = React.useCallback(
-    (leadId: string, input: ActivityFormValues): Activity => {
-      const newActivity: Activity = {
-        ...input,
-        id: `activity_${crypto.randomUUID()}`,
-        leadId,
-        author: lead.owner.name,
-      };
-      setActivities((prev) => [newActivity, ...prev]);
-      return newActivity;
+    async (leadId: string, input: ActivityFormValues): Promise<{ error?: string }> => {
+      const result = await createActivity(currentWorkspace.id, leadId, input);
+      if (result.error) {
+        return { error: result.error };
+      }
+      router.refresh();
+      return {};
     },
-    [lead.owner.name]
+    [currentWorkspace.id, router]
   );
 
   return (

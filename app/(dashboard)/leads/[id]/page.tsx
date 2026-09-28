@@ -4,6 +4,7 @@ import { UserX } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { LeadDetailView } from "@/components/lead-detail-view";
 import { Button } from "@/components/ui/button";
+import { getActivitiesForLead } from "@/lib/activities";
 import { getLeadById } from "@/lib/leads";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentWorkspaceId } from "@/lib/workspace";
@@ -32,5 +33,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
     );
   }
 
-  return <LeadDetailView lead={lead} />;
+  const activities = await getActivitiesForLead(supabase, workspaceId!, lead.id);
+
+  return <LeadDetailView lead={lead} activities={activities} />;
 }

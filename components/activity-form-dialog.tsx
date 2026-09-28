@@ -11,13 +11,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Activity } from "@/types/activity";
 
 interface ActivityFormDialogProps {
   leadId: string;
   trigger: React.ReactNode;
-  onAddActivity: (leadId: string, input: ActivityFormValues) => Activity;
-  onSuccess?: (activity: Activity) => void;
+  onAddActivity: (leadId: string, input: ActivityFormValues) => Promise<{ error?: string }>;
+  onSuccess?: () => void;
 }
 
 export function ActivityFormDialog({
@@ -39,9 +38,9 @@ export function ActivityFormDialog({
         <ActivityForm
           leadId={leadId}
           onAddActivity={onAddActivity}
-          onSuccess={(activity) => {
+          onSuccess={() => {
             setOpen(false);
-            onSuccess?.(activity);
+            onSuccess?.();
           }}
         />
       </DialogContent>
