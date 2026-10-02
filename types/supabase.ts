@@ -11,16 +11,19 @@ export interface Database {
         Row: {
           id: string;
           full_name: string;
+          email: string;
           created_at: string;
         };
         Insert: {
           id: string;
           full_name?: string;
+          email?: string;
           created_at?: string;
         };
         Update: {
           id?: string;
           full_name?: string;
+          email?: string;
           created_at?: string;
         };
         Relationships: [];
@@ -74,6 +77,60 @@ export interface Database {
         Relationships: [
           {
             foreignKeyName: "workspace_members_workspace_id_fkey";
+            columns: ["workspace_id"];
+            isOneToOne: false;
+            referencedRelation: "workspaces";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "workspace_members_user_id_profiles_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      workspace_invites: {
+        Row: {
+          id: string;
+          workspace_id: string;
+          email: string;
+          role: "admin" | "member";
+          invited_by: string;
+          token: string;
+          status: "pending" | "accepted" | "revoked";
+          created_at: string;
+          accepted_at: string | null;
+          expires_at: string;
+        };
+        Insert: {
+          id?: string;
+          workspace_id: string;
+          email: string;
+          role?: "admin" | "member";
+          invited_by: string;
+          token?: string;
+          status?: "pending" | "accepted" | "revoked";
+          created_at?: string;
+          accepted_at?: string | null;
+          expires_at?: string;
+        };
+        Update: {
+          id?: string;
+          workspace_id?: string;
+          email?: string;
+          role?: "admin" | "member";
+          invited_by?: string;
+          token?: string;
+          status?: "pending" | "accepted" | "revoked";
+          created_at?: string;
+          accepted_at?: string | null;
+          expires_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "workspace_invites_workspace_id_fkey";
             columns: ["workspace_id"];
             isOneToOne: false;
             referencedRelation: "workspaces";
@@ -340,6 +397,36 @@ export interface Database {
         Args: { ws_id: string };
         Returns: boolean;
       };
+      invite_member: {
+        Args: { p_workspace_id: string; p_email: string; p_role?: "admin" | "member" };
+        Returns: Database["public"]["Tables"]["workspace_invites"]["Row"];
+      };
+      revoke_invite: {
+        Args: { p_invite_id: string };
+        Returns: void;
+      };
+      get_invite_preview: {
+        Args: { p_token: string };
+        Returns: {
+          workspace_name: string;
+          email: string;
+          role: "admin" | "member";
+          status: "pending" | "accepted" | "revoked";
+          expires_at: string;
+        }[];
+      };
+      accept_invite: {
+        Args: { p_token: string };
+        Returns: Database["public"]["Tables"]["workspaces"]["Row"];
+      };
+      update_member_role: {
+        Args: { p_workspace_id: string; p_user_id: string; p_role: "admin" | "member" };
+        Returns: void;
+      };
+      remove_member: {
+        Args: { p_workspace_id: string; p_user_id: string };
+        Returns: void;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
@@ -349,6 +436,7 @@ export interface Database {
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Workspace = Database["public"]["Tables"]["workspaces"]["Row"];
 export type WorkspaceMember = Database["public"]["Tables"]["workspace_members"]["Row"];
+export type WorkspaceInvite = Database["public"]["Tables"]["workspace_invites"]["Row"];
 export type LeadRow = Database["public"]["Tables"]["leads"]["Row"];
 export type DealRow = Database["public"]["Tables"]["deals"]["Row"];
 export type ActivityRow = Database["public"]["Tables"]["activities"]["Row"];

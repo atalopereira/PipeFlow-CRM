@@ -3,7 +3,10 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { CURRENT_WORKSPACE_COOKIE } from "@/lib/constants/workspace-cookie";
+import {
+  CURRENT_WORKSPACE_COOKIE,
+  WORKSPACE_COOKIE_MAX_AGE,
+} from "@/lib/constants/workspace-cookie";
 import { createClient } from "@/lib/supabase/server";
 
 export interface ActionResult {
@@ -13,8 +16,6 @@ export interface ActionResult {
 export interface SignUpResult extends ActionResult {
   needsConfirmation?: boolean;
 }
-
-const WORKSPACE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 function translateAuthError(message: string): string {
   switch (message) {
@@ -31,7 +32,11 @@ function translateAuthError(message: string): string {
   }
 }
 
-export async function signIn(email: string, password: string): Promise<ActionResult> {
+export async function signIn(
+  email: string,
+  password: string,
+  redirectTo?: string
+): Promise<ActionResult> {
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -39,17 +44,23 @@ export async function signIn(email: string, password: string): Promise<ActionRes
     return { error: translateAuthError(error.message) };
   }
 
-  redirect("/dashboard");
+  redirect(redirectTo || "/dashboard");
 }
 
-export async function signUp(name: string, email: string, password: string): Promise<SignUpResult> {
+export async function signUp(
+  name: string,
+  email: string,
+  password: string,
+  redirectTo?: string
+): Promise<SignUpResult> {
   const supabase = await createClient();
+  const nextPath = redirectTo || "/onboarding";
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: { full_name: name },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback?next=${encodeURIComponent(nextPath)}`,
     },
   });
 
@@ -61,7 +72,7 @@ export async function signUp(name: string, email: string, password: string): Pro
     return { needsConfirmation: true };
   }
 
-  redirect("/onboarding");
+  redirect(nextPath);
 }
 
 export async function signOut(): Promise<void> {
