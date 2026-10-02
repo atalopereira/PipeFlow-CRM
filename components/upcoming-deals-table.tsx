@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/table";
 import { UserAvatar } from "@/components/user-avatar";
 import { isDealOverdue } from "@/lib/metrics";
-import { getMockLeadById } from "@/lib/mock/leads";
 import { cn, formatCurrency, formatDateOnly } from "@/lib/utils";
 import type { Deal } from "@/types/deal";
 
@@ -51,7 +50,6 @@ export function UpcomingDealsTable({ deals, today }: UpcomingDealsTableProps) {
             </TableHeader>
             <TableBody>
               {deals.map((deal) => {
-                const lead = getMockLeadById(deal.leadId);
                 const overdue = isDealOverdue(deal.dueDate, today);
                 return (
                   <TableRow key={deal.id} className="group">
@@ -65,7 +63,7 @@ export function UpcomingDealsTable({ deals, today }: UpcomingDealsTableProps) {
                       </Link>
                     </TableCell>
                     <TableCell className="whitespace-nowrap text-muted-foreground">
-                      {lead?.name ?? "—"}
+                      {deal.lead.name}
                     </TableCell>
                     <TableCell className="whitespace-nowrap">
                       <StageBadge stageId={deal.stageId} />

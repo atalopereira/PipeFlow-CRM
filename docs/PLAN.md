@@ -165,8 +165,8 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 **Branch:** `feature/metrics-backend`
 **Objetivo:** Métricas calculadas a partir de dados reais.
 
-- [ ] Queries agregadas para os cards de métricas (M7)
-- [ ] Conectar gráfico de funil e lista de prazos próximos a dados reais
+- [x] Queries agregadas para os cards de métricas (M7)
+- [x] Conectar gráfico de funil e lista de prazos próximos a dados reais
 
 **Commit final:** `feat: compute dashboard metrics from real Supabase data`
 
