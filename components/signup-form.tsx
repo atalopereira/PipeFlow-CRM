@@ -34,7 +34,11 @@ const signupSchema = z
 
 type SignupValues = z.infer<typeof signupSchema>;
 
-export function SignupForm() {
+interface SignupFormProps {
+  redirectTo?: string;
+}
+
+export function SignupForm({ redirectTo }: SignupFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [formError, setFormError] = React.useState<string | null>(null);
   const [confirmationEmail, setConfirmationEmail] = React.useState<string | null>(null);
@@ -47,7 +51,7 @@ export function SignupForm() {
   async function onSubmit(values: SignupValues) {
     setFormError(null);
     setIsSubmitting(true);
-    const result = await signUp(values.name, values.email, values.password);
+    const result = await signUp(values.name, values.email, values.password, redirectTo);
     if (result?.error) {
       setFormError(result.error);
       setIsSubmitting(false);
@@ -65,8 +69,8 @@ export function SignupForm() {
         <MailCheck className="h-10 w-10 text-primary" />
         <p className="text-sm text-muted-foreground">
           Enviamos um link de confirmação para{" "}
-          <span className="font-medium text-foreground">{confirmationEmail}</span>. Clique no
-          link para ativar sua conta e continuar.
+          <span className="font-medium text-foreground">{confirmationEmail}</span>. Clique no link
+          para ativar sua conta e continuar.
         </p>
       </div>
     );

@@ -176,9 +176,9 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 **Branch:** `feature/workspace-collab-backend`
 **Objetivo:** Convite de colaboradores e papéis funcionando de ponta a ponta.
 
-- [ ] Convite de colaboradores por e-mail (Resend)
-- [ ] Papéis Admin/Membro com permissões aplicadas (RLS + checagem na UI)
-- [ ] Troca real entre workspaces (M3) usando dados do usuário autenticado
+- [x] Convite de colaboradores por e-mail (Resend)
+- [x] Papéis Admin/Membro com permissões aplicadas (RLS + checagem na UI)
+- [x] Troca real entre workspaces (M3) usando dados do usuário autenticado
 
 **Commit final:** `feat: add real workspace invites, roles and switching`
 

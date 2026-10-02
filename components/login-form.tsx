@@ -26,7 +26,11 @@ const loginSchema = z.object({
 
 type LoginValues = z.infer<typeof loginSchema>;
 
-export function LoginForm() {
+interface LoginFormProps {
+  redirectTo?: string;
+}
+
+export function LoginForm({ redirectTo }: LoginFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [formError, setFormError] = React.useState<string | null>(null);
 
@@ -38,7 +42,7 @@ export function LoginForm() {
   async function onSubmit(values: LoginValues) {
     setFormError(null);
     setIsSubmitting(true);
-    const result = await signIn(values.email, values.password);
+    const result = await signIn(values.email, values.password, redirectTo);
     if (result?.error) {
       setFormError(result.error);
       setIsSubmitting(false);
