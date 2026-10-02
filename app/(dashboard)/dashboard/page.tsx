@@ -4,6 +4,8 @@ import { DealsByStageChart } from "@/components/deals-by-stage-chart";
 import { PageHeader } from "@/components/page-header";
 import { StatCard } from "@/components/stat-card";
 import { UpcomingDealsTable } from "@/components/upcoming-deals-table";
+import { getDeals } from "@/lib/deals";
+import { getLeads } from "@/lib/leads";
 import {
   getConversionRate,
   getDealsByStage,
@@ -12,18 +14,25 @@ import {
   getTotalLeads,
   getUpcomingDeals,
 } from "@/lib/metrics";
-import { MOCK_DEALS, NOW } from "@/lib/mock/deals";
-import { MOCK_LEADS } from "@/lib/mock/leads";
+import { createClient } from "@/lib/supabase/server";
 import { formatCurrency } from "@/lib/utils";
+import { getCurrentWorkspaceId } from "@/lib/workspace";
 
-export default function DashboardPage() {
-  const totalLeads = getTotalLeads(MOCK_LEADS);
-  const openDeals = getOpenDealsCount(MOCK_DEALS);
-  const pipelineValue = getPipelineValue(MOCK_DEALS);
-  const conversionRate = getConversionRate(MOCK_DEALS);
-  const stageData = getDealsByStage(MOCK_DEALS);
-  const upcomingDeals = getUpcomingDeals(MOCK_DEALS, 5);
-  const today = NOW.toISOString().slice(0, 10);
+export default async function DashboardPage() {
+  const supabase = await createClient();
+  const workspaceId = await getCurrentWorkspaceId(supabase);
+
+  const [leads, deals] = workspaceId
+    ? await Promise.all([getLeads(supabase, workspaceId), getDeals(supabase, workspaceId)])
+    : [[], []];
+
+  const totalLeads = getTotalLeads(leads);
+  const openDeals = getOpenDealsCount(deals);
+  const pipelineValue = getPipelineValue(deals);
+  const conversionRate = getConversionRate(deals);
+  const stageData = getDealsByStage(deals);
+  const upcomingDeals = getUpcomingDeals(deals, 5);
+  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="flex flex-col gap-6 duration-300 animate-in fade-in-0 slide-in-from-bottom-1">
@@ -35,7 +44,6 @@ export default function DashboardPage() {
           value={String(totalLeads)}
           icon={Users}
           iconClassName="bg-blue-500/10 text-blue-400"
-          trend={{ value: 18, direction: "up" }}
           className="duration-500 animate-in fade-in-0 slide-in-from-bottom-2 [animation-delay:0ms] [animation-fill-mode:backwards]"
         />
         <StatCard
@@ -43,7 +51,6 @@ export default function DashboardPage() {
           value={String(openDeals)}
           icon={TrendingUp}
           iconClassName="bg-violet-500/10 text-violet-400"
-          trend={{ value: 5, direction: "up" }}
           className="duration-500 animate-in fade-in-0 slide-in-from-bottom-2 [animation-delay:100ms] [animation-fill-mode:backwards]"
         />
         <StatCard
@@ -51,7 +58,6 @@ export default function DashboardPage() {
           value={formatCurrency(pipelineValue)}
           icon={DollarSign}
           iconClassName="bg-amber-500/10 text-amber-400"
-          trend={{ value: 23, direction: "up" }}
           className="duration-500 animate-in fade-in-0 slide-in-from-bottom-2 [animation-delay:200ms] [animation-fill-mode:backwards]"
         />
         <StatCard
@@ -59,7 +65,6 @@ export default function DashboardPage() {
           value={`${Math.round(conversionRate * 100)}%`}
           icon={Percent}
           iconClassName="bg-emerald-500/10 text-emerald-400"
-          trend={{ value: 4, direction: "up" }}
           className="duration-500 animate-in fade-in-0 slide-in-from-bottom-2 [animation-delay:300ms] [animation-fill-mode:backwards]"
         />
       </div>
