@@ -70,6 +70,22 @@ export async function getLeads(
   return (data ?? []).map(mapLeadRow);
 }
 
+export async function getLeadCount(
+  supabase: SupabaseClient<Database>,
+  workspaceId: string
+): Promise<number> {
+  const { count, error } = await supabase
+    .from("leads")
+    .select("*", { count: "exact", head: true })
+    .eq("workspace_id", workspaceId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return count ?? 0;
+}
+
 export async function getLeadById(
   supabase: SupabaseClient<Database>,
   workspaceId: string,

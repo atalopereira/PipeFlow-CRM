@@ -35,9 +35,9 @@ export async function createCheckoutSession(workspaceId: string): Promise<Action
     line_items: [{ price: process.env.STRIPE_PRO_PRICE_ID!, quantity: 1 }],
     customer: subscription?.stripe_customer_id ?? undefined,
     customer_email: subscription?.stripe_customer_id ? undefined : user.email,
-    subscription_data: { metadata: { workspace_id: workspaceId } },
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?checkout=success`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?checkout=canceled`,
+    subscription_data: { metadata: { workspace_id: workspaceId, user_id: user.id } },
+    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing?checkout=success`,
+    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing?checkout=canceled`,
   });
 
   if (!session.url) {
@@ -74,7 +74,7 @@ export async function createPortalSession(workspaceId: string): Promise<ActionRe
 
   const session = await stripe.billingPortal.sessions.create({
     customer: subscription.stripe_customer_id,
-    return_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings`,
+    return_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing`,
   });
 
   redirect(session.url);
