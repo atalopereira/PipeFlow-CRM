@@ -188,10 +188,10 @@ Cada milestone roda em sua própria branch a partir de `main`, termina com um co
 **Branch:** `feature/stripe-billing`
 **Objetivo:** Cobrança de assinatura funcionando ponta a ponta.
 
-- [ ] Stripe Checkout para upgrade Free → Pro
-- [ ] Webhook de ativação/desativação de plano (idempotente, com verificação de assinatura)
-- [ ] Customer Portal para gerenciamento de assinatura
-- [ ] Enforcement dos limites do plano Free (2 colaboradores / 50 leads) na aplicação
+- [x] Stripe Checkout para upgrade Free → Pro
+- [x] Webhook de ativação/desativação de plano (idempotente, com verificação de assinatura)
+- [x] Customer Portal para gerenciamento de assinatura
+- [x] Enforcement dos limites do plano Free (2 colaboradores / 50 leads) na aplicação
 
 **Commit final:** `feat: add Stripe checkout, webhook and plan limit enforcement`
 
