@@ -5,7 +5,8 @@ Runbook para publicar o PipeFlow CRM em produção.
 **Decisões para este go-live** (primeira publicação, validando o fluxo completo antes de abrir cobrança real):
 - **Domínio:** subdomínio gratuito `*.vercel.app` do projeto já existente na Vercel — sem domínio próprio por enquanto. Revisitar a seção 3 quando um domínio for comprado.
 - **Stripe:** permanece em modo **sandbox/test** (mesma conta `pipeflow-crm` já autenticada no Stripe CLI deste ambiente) — sem cobranças reais ainda. Revisitar a seção 4 quando o time decidir abrir cobrança real (trocar chaves `sk_live_`/`pk_live_`, recriar o produto/preço Pro em Live e registrar um novo webhook em Live mode).
-- **Projeto Vercel:** já existe, conectado ao repo `atalopereira/PipeFlow-CRM` no GitHub — falta apenas configurar as env vars de produção nele.
+- **Projeto Vercel:** já existe, conectado ao repo `atalopereira/PipeFlow-CRM` no GitHub, publicado em `https://pipe-flow-crm-gold.vercel.app` — falta apenas configurar as env vars de produção nele.
+- **Webhook da Stripe:** já registrado (`we_1UPnFDDgP0dFjHVeNcorqJhi`, sandbox mode) apontando para `https://pipe-flow-crm-gold.vercel.app/api/webhooks/stripe`. O signing secret foi gerado na criação e não é recuperável depois — foi passado fora deste arquivo; configurar `STRIPE_WEBHOOK_SECRET` na Vercel agora, antes de perder o valor.
 
 A aplicação já lê toda configuração de ambiente — nenhuma URL de `localhost` está hardcoded no código (confirmado via grep). Isso significa que o go-live é, na prática, um checklist de configuração + verificação, não uma mudança de código.
 
@@ -24,7 +25,7 @@ O projeto já existe na Vercel (importado do GitHub). Configurar em **Settings �
 
 | Variável | Valor em produção |
 |---|---|
-| `NEXT_PUBLIC_APP_URL` | URL de produção do projeto, ex. `https://pipeflow-crm.vercel.app` (sem barra no final) |
+| `NEXT_PUBLIC_APP_URL` | `https://pipe-flow-crm-gold.vercel.app` (sem barra no final) |
 | `NEXT_PUBLIC_SUPABASE_URL` | Project URL do Supabase de produção |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon key do Supabase de produção |
 | `SUPABASE_SERVICE_ROLE_KEY` | service_role key do Supabase de produção (nunca expor ao client) |
@@ -48,25 +49,28 @@ Quando um domínio próprio for comprado:
 3. Recriar o webhook da Stripe (seção 4) apontando para o novo domínio.
 4. Redeploy.
 
-## 4. Webhook da Stripe (sandbox/test mode)
+## 4. Webhook da Stripe (sandbox/test mode) — já registrado
 
-O endpoint já implementado é idempotente (`upsert` por `workspace_id`) e valida a assinatura antes de processar — ver [app/api/webhooks/stripe/route.ts](../app/api/webhooks/stripe/route.ts). Falta só registrá-lo apontando para a URL de produção:
+O endpoint já implementado é idempotente (`upsert` por `workspace_id`) e valida a assinatura antes de processar — ver [app/api/webhooks/stripe/route.ts](../app/api/webhooks/stripe/route.ts).
 
-1. No [dashboard da Stripe](https://dashboard.stripe.com/test/webhooks), com **Test mode** ativo, criar um endpoint apontando para `https://<projeto>.vercel.app/api/webhooks/stripe`.
-2. Eventos a assinar (os mesmos tratados no handler): `checkout.session.completed`, `customer.subscription.deleted`, `invoice.payment_failed`.
-3. Copiar o **Signing secret** gerado e colocar em `STRIPE_WEBHOOK_SECRET` na Vercel (Production).
-4. Alternativa via CLI, já autenticada neste ambiente em modo sandbox (`stripe config --list` mostra a conta `pipeflow-crm`):
-   ```bash
-   stripe webhook_endpoints create \
-     --url https://<projeto>.vercel.app/api/webhooks/stripe \
-     --enabled-events checkout.session.completed,customer.subscription.deleted,invoice.payment_failed
-   ```
+Registrado via CLI (conta `pipeflow-crm`, sandbox mode) apontando para a URL de produção:
+
+```bash
+stripe webhook_endpoints create \
+  --url https://pipe-flow-crm-gold.vercel.app/api/webhooks/stripe \
+  --enabled-events checkout.session.completed \
+  --enabled-events customer.subscription.deleted \
+  --enabled-events invoice.payment_failed
+```
+
+- **Endpoint ID:** `we_1UPnFDDgP0dFjHVeNcorqJhi`
+- **Signing secret:** gerado na criação, não listado aqui (não é recuperável depois pela API/CLI — se perdido, rotacionar o endpoint no [dashboard](https://dashboard.stripe.com/test/webhooks) e gerar um novo). Configurar em `STRIPE_WEBHOOK_SECRET` na Vercel.
 
 > Quando o time decidir abrir cobrança real: alternar para **Live mode** na Stripe, recriar o produto/preço Pro em Live (produtos/preços de Test e Live são entidades separadas), trocar as chaves na Vercel para `sk_live_`/`pk_live_` e repetir este passo para registrar o webhook em Live mode.
 
 ## 5. Checklist final (fluxo completo em produção)
 
-Testar direto na URL `*.vercel.app` de produção, não em preview local:
+Testar direto em `https://pipe-flow-crm-gold.vercel.app`, não em preview local:
 
 - [ ] **Signup**: criar conta nova → e-mail de confirmação chega e o link redireciona para a URL de produção (não localhost)
 - [ ] **Workspace**: onboarding cria o workspace inicial
