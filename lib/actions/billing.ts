@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import type Stripe from "stripe";
 
 import { stripe } from "@/lib/stripe/client";
 import { createClient } from "@/lib/supabase/server";
@@ -30,15 +31,21 @@ export async function createCheckoutSession(workspaceId: string): Promise<Action
     .eq("workspace_id", workspaceId)
     .maybeSingle();
 
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    line_items: [{ price: process.env.STRIPE_PRO_PRICE_ID!, quantity: 1 }],
-    customer: subscription?.stripe_customer_id ?? undefined,
-    customer_email: subscription?.stripe_customer_id ? undefined : user.email,
-    subscription_data: { metadata: { workspace_id: workspaceId, user_id: user.id } },
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing?checkout=success`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing?checkout=canceled`,
-  });
+  let session: Stripe.Checkout.Session;
+  try {
+    session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      line_items: [{ price: process.env.STRIPE_PRO_PRICE_ID!, quantity: 1 }],
+      customer: subscription?.stripe_customer_id ?? undefined,
+      customer_email: subscription?.stripe_customer_id ? undefined : user.email,
+      subscription_data: { metadata: { workspace_id: workspaceId, user_id: user.id } },
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing?checkout=success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing?checkout=canceled`,
+    });
+  } catch (err) {
+    console.error("Erro ao criar sessão de checkout da Stripe:", err);
+    return { error: "Não foi possível iniciar o checkout." };
+  }
 
   if (!session.url) {
     return { error: "Não foi possível iniciar o checkout." };
@@ -72,10 +79,16 @@ export async function createPortalSession(workspaceId: string): Promise<ActionRe
     return { error: "Nenhuma assinatura encontrada para este workspace." };
   }
 
-  const session = await stripe.billingPortal.sessions.create({
-    customer: subscription.stripe_customer_id,
-    return_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing`,
-  });
+  let session: Stripe.BillingPortal.Session;
+  try {
+    session = await stripe.billingPortal.sessions.create({
+      customer: subscription.stripe_customer_id,
+      return_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing`,
+    });
+  } catch (err) {
+    console.error("Erro ao criar sessão do portal de cobrança da Stripe:", err);
+    return { error: "Não foi possível abrir o portal de cobrança." };
+  }
 
   redirect(session.url);
 }

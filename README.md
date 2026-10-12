@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PipeFlow CRM
 
-## Getting Started
+CRM multi-empresa para pequenas e médias equipes de vendas: pipeline Kanban visual, gestão de leads e contatos, timeline de atividades, colaboração multi-workspace e cobrança via Stripe.
 
-First, run the development server:
+Spec completa do produto: [docs/PRD.md](docs/PRD.md). Plano de execução (milestones M0–M15): [docs/PLAN.md](docs/PLAN.md). Convenções de código e stack: [CLAUDE.md](CLAUDE.md).
+
+## Stack
+
+Next.js 14 (App Router) + TypeScript + Tailwind/shadcn-ui · Supabase (Postgres, Auth, RLS) · Stripe (Checkout, webhooks, Customer Portal) · Resend (e-mail transacional) · Vercel (deploy).
+
+## Rodando localmente
 
 ```bash
+npm install
+cp .env.local.example .env.local   # preencher com as credenciais de dev
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Variáveis de ambiente necessárias estão documentadas em [.env.local.example](.env.local.example).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+```bash
+npm run dev         # servidor de desenvolvimento
+npm run build       # build de produção
+npm run start       # roda o build de produção
+npm run lint         # ESLint
+npm run typecheck    # tsc --noEmit
+npm run format       # Prettier (write)
+npm run test:e2e     # Playwright
+```
 
-To learn more about Next.js, take a look at the following resources:
+Testes locais do webhook da Stripe:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+stripe listen --forward-to localhost:3000/api/webhooks/stripe
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Migrações e policies do banco vivem em `supabase/migrations/` e `supabase/policies/`; aplicar com `supabase db push` (projeto Supabase linkado).
 
-## Deploy on Vercel
+## Deploy em produção
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Ver [docs/DEPLOY.md](docs/DEPLOY.md) — runbook com variáveis de ambiente de produção, configuração de domínio, webhook da Stripe em modo Live e checklist de validação do fluxo completo (signup → workspace → lead → pipeline → billing).

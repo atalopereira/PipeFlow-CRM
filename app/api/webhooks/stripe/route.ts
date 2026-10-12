@@ -104,6 +104,13 @@ export async function POST(request: Request): Promise<NextResponse> {
         await syncSubscription(event.data.object as Stripe.Subscription);
         break;
       }
+      // Mudança de status na assinatura (ex.: volta de past_due para active
+      // após o cliente atualizar o cartão) — mantém o status exibido em
+      // /settings/billing em sincronia com a Stripe.
+      case "customer.subscription.updated": {
+        await syncSubscription(event.data.object as Stripe.Subscription);
+        break;
+      }
       // Cobrança falhou: sincroniza o status (past_due) sem derrubar o
       // acesso Pro imediatamente — a Stripe cuida das novas tentativas e só
       // dispara subscription.deleted se todas falharem.
@@ -115,6 +122,17 @@ export async function POST(request: Request): Promise<NextResponse> {
           console.error(
             `Webhook da Stripe: falha de pagamento na fatura ${invoice.id} (assinatura ${subscriptionId}), tentativa ${invoice.attempt_count}.`
           );
+          await syncSubscription(subscription);
+        }
+        break;
+      }
+      // Cobrança recuperada após past_due (dunning): sincroniza de volta
+      // para o status real da assinatura na Stripe.
+      case "invoice.payment_succeeded": {
+        const invoice = event.data.object as Stripe.Invoice;
+        const subscriptionId = getInvoiceSubscriptionId(invoice);
+        if (subscriptionId) {
+          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
           await syncSubscription(subscription);
         }
         break;
