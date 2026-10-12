@@ -66,6 +66,8 @@ stripe webhook_endpoints create \
 - **Endpoint ID:** `we_1UPnFDDgP0dFjHVeNcorqJhi`
 - **Signing secret:** gerado na criação, não listado aqui (não é recuperável depois pela API/CLI — se perdido, rotacionar o endpoint no [dashboard](https://dashboard.stripe.com/test/webhooks) e gerar um novo). Configurar em `STRIPE_WEBHOOK_SECRET` na Vercel.
 
+> **Pendente (achado da auditoria de segurança 5.1):** o endpoint só está inscrito em `checkout.session.completed`, `customer.subscription.deleted` e `invoice.payment_failed`. Sem `customer.subscription.updated` e `invoice.payment_succeeded`, uma assinatura que volta de `past_due` para `active` (dunning recovery) nunca reverte o `status` exibido em `/settings/billing` — o handler (`syncSubscription`) já trata esses dois eventos de forma idempotente, só falta inscrevê-los no dashboard da Stripe (**Developers → Webhooks → este endpoint → Add events**).
+
 > Quando o time decidir abrir cobrança real: alternar para **Live mode** na Stripe, recriar o produto/preço Pro em Live (produtos/preços de Test e Live são entidades separadas), trocar as chaves na Vercel para `sk_live_`/`pk_live_` e repetir este passo para registrar o webhook em Live mode.
 
 ## 5. Checklist final (fluxo completo em produção)
